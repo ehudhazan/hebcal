@@ -6,7 +6,7 @@ namespace hebcal
     {
         internal DateTime date;
 
-        public string title { get; set; }
+        public string title { get; set; } = string.Empty;
         public bool IsRoshchodesh { get; set; }
         public string Candeles { get; internal set; }
         public string Havdalah { get; internal set; }
