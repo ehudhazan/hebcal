@@ -144,7 +144,7 @@ File is ready at {monthlyOutputFile}");
                 csv.WriteField(day.date.ToString("yyyy-MM-dd"), true);
                 csv.WriteField(day.title, true);
                 csv.WriteField(day.date.Month);
-                csv.WriteField(day.date.ToString("dd"), true);
+                csv.WriteField(day.date.Day);
                 csv.WriteField(day.date.ToString("MM"), true);
                 csv.WriteField(day.date.ToString("MMM"), true);
                 csv.WriteField(day.date.ToString("MMMM"), true);
