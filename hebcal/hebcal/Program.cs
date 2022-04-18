@@ -30,7 +30,7 @@ namespace hebcal
             }
             var fromMonth = Configuration["fm"] ?? Configuration["from-month"] ?? "9";
             var toMonth = Configuration["tm"] ?? Configuration["to-month"] ?? fromMonth;
-            var delimiter = Configuration["d"] ?? Configuration["delimiter"] ?? ",";
+            var delimiter = Configuration["d"] ?? Configuration["delimiter"] ?? "\t";
             if (delimiter == "\\t" || delimiter == "t")
             {
                 delimiter = "\t";
@@ -39,8 +39,8 @@ namespace hebcal
             var encoding = Configuration["e"] ?? Configuration["encoding"] ?? "utf-16";
             var cleanup = (Configuration["c"] ?? cleanupDefault).Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            var weeklyOutputFile = Path.Combine(output, $"hebcal-week-{year}-{year + 1}.csv");
-            var monthlyOutputFile = Path.Combine(output, $"hebcal-monthly-{year}-{year + 1}.csv");
+            var weeklyOutputFile = Path.Combine(output, $"hebcal-week-{year}-{year + 1}.txt");
+            var monthlyOutputFile = Path.Combine(output, $"hebcal-monthly-{year}-{year + 1}.txt");
 
             Console.WriteLine($@"
 years:      01-{fromMonth}-{year} to {DateTime.DaysInMonth(year + 1, int.Parse(toMonth))}-{toMonth}-{year + 1}
@@ -123,7 +123,9 @@ File is ready at {monthlyOutputFile}");
                 csv.WriteField($"day-{i}-DD");
                 csv.WriteField($"day-{i}-MM");
                 csv.WriteField($"day-{i}-MMM");
+                csv.WriteField($"day-{i}-MMM2");
                 csv.WriteField($"day-{i}-MMMM");
+                csv.WriteField($"day-{i}-MMMM2");
                 csv.WriteField($"day-{i}-HebMonth");
                 csv.WriteField($"day-{i}-HebMonthDay");
                 csv.WriteField($"day-{i}-HebDay");
@@ -139,6 +141,8 @@ File is ready at {monthlyOutputFile}");
 
         private static void WriteDay(CsvHelper.CsvWriter csv, CalWeek week)
         {
+            var he = CultureInfo.GetCultureInfo("he-IL");
+            var en = CultureInfo.GetCultureInfo("en-US");
             foreach (var day in week.Days)
             {
                 csv.WriteField(day.date.ToString("yyyy-MM-dd"), true);
@@ -146,8 +150,10 @@ File is ready at {monthlyOutputFile}");
                 csv.WriteField(day.date.Month);
                 csv.WriteField(day.date.Day);
                 csv.WriteField(day.date.ToString("MM"), true);
-                csv.WriteField(day.date.ToString("MMM"), true);
-                csv.WriteField(day.date.ToString("MMMM"), true);
+                csv.WriteField(he.DateTimeFormat.GetMonthName(day.date.Month), true);
+                csv.WriteField(he.DateTimeFormat.GetAbbreviatedMonthName(day.date.Month).Replace("׳",""), true);
+                csv.WriteField(en.DateTimeFormat.GetMonthName(day.date.Month), true);
+                csv.WriteField(en.DateTimeFormat.GetAbbreviatedMonthName(day.date.Month), true);
                 csv.WriteField(day.HebMonth, true);
                 csv.WriteField(day.HebMonthDay, true);
                 csv.WriteField(day.HebDay, true);
@@ -307,7 +313,7 @@ ex 2: hebcal year={DateTime.Now.Year} d=\t o=""{Environment.CurrentDirectory}"" 
 year - the year to start from [default={DateTime.Now.Year}]
 fm, from-month - month to start from [default: 9]
 tm, to-month - month to end on (end of month of next year) [default:  from-month]
-d, delimiter - [default: ,] t|\t = tab
+d, delimiter - [default: \t] t|\t = tab
 o, output - folder path to place the result file
 e, encoding - output encoding [default: utf-16]
 c - title cleanup [""{cleanupDefault}""]
