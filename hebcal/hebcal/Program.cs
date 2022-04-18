@@ -41,6 +41,7 @@ namespace hebcal
 
             var weeklyOutputFile = Path.Combine(output, $"hebcal-week-{year}-{year + 1}.txt");
             var monthlyOutputFile = Path.Combine(output, $"hebcal-monthly-{year}-{year + 1}.txt");
+            var flatOutputFile = Path.Combine(output, $"hebcal-flat-{year}-{year + 1}.txt");
 
             Console.WriteLine($@"
 years:      01-{fromMonth}-{year} to {DateTime.DaysInMonth(year + 1, int.Parse(toMonth))}-{toMonth}-{year + 1}
@@ -48,6 +49,7 @@ delimiter:  {delimiter}
 encoding:   {encoding}
 file week output:       {weeklyOutputFile}
 file monthly output:    {monthlyOutputFile}
+file flat output:       {flatOutputFile}
 
 started at: {DateTime.Now}
 processing...
@@ -71,6 +73,22 @@ writing monthly data...");
             Console.WriteLine($@"{sw.Elapsed}: monthly file is done
 File is ready at {monthlyOutputFile}");
 
+            WriteFlat(delimiter, encoding, flatOutputFile, hcWeeks);
+            Console.WriteLine($@"{sw.Elapsed}: flat file is done
+File is ready at {flatOutputFile}");
+
+        }
+
+         private static void WriteFlat(string delimiter, string encoding, string weeklyOutputFile, List<CalWeek> hcWeeks)
+        {
+            var sr = new StreamWriter(weeklyOutputFile, false, Encoding.GetEncoding(encoding)) as TextWriter;
+            var csv = new CsvHelper.CsvWriter(sr, new CsvHelper.Configuration.CsvConfiguration(CultureInfo.GetCultureInfo("he-IL")) { Delimiter = delimiter });
+            WriteHeader(csv);
+            foreach (var week in hcWeeks)
+            {
+                WriteDay(csv, week);
+            }
+            csv.Flush();
         }
 
         private static void WriteMonthly(string delimiter, string encoding, string weeklyOutputFile, List<CalWeek> hcWeeks)
@@ -119,6 +137,7 @@ File is ready at {monthlyOutputFile}");
             {
                 csv.WriteField($"day-{i}-date");
                 csv.WriteField($"day-{i}-title");
+                csv.WriteField($"day-{i}-Year");
                 csv.WriteField($"day-{i}-Month");
                 csv.WriteField($"day-{i}-DD");
                 csv.WriteField($"day-{i}-MM");
@@ -147,6 +166,7 @@ File is ready at {monthlyOutputFile}");
             {
                 csv.WriteField(day.date.ToString("yyyy-MM-dd"), true);
                 csv.WriteField(day.title, true);
+                csv.WriteField(day.date.Year);
                 csv.WriteField(day.date.Month);
                 csv.WriteField(day.date.Day);
                 csv.WriteField(day.date.ToString("MM"), true);

@@ -6,3 +6,5 @@
 /hebcal/hebcal/obj
 /hebcal/hebcal/bin
 /hebcal/hebcal/publish
+hebcal/hebcal/hebcal-*.json
+hebcal/hebcal/hebcal-*.txt
