@@ -14,14 +14,19 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "publish trimmed",
+            "command":"dotnet",
+            "args": ["publish -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -p:PublishTrimmed=true -o ./publish"],
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "publish",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "publish",
                 "${workspaceFolder}/hebcal.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "/property:GenerateFullPaths=true"          
             ],
             "problemMatcher": "$msCompile"
         },
